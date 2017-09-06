@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Mestre Dos Filmes</string>
+    <string name="titulo">Titulo</string>
+    <string name="descricao">Descrição</string>
+    <string name="_20_08_2016">20/08/2016</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
