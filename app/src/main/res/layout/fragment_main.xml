@@ -6,6 +6,7 @@
     tools:context="br.com.mestredosfilmes.mestredosfilmes.FilmeDetalheActivity">
 
     <ListView
+        style="@style/MestreDosFilmesListStyle"
         android:id="@+id/list_filmes"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

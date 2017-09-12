@@ -1,7 +1,7 @@
 package br.com.mestredosfilmes.mestredosfilmes;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +18,13 @@ import java.util.ArrayList;
 
 public class MainFragment extends Fragment {
 
+    private static final String KEY_POSICAO = "SELECIONADO";
+    private int posicaoItem = ListView.INVALID_POSITION;
+    private ListView listView;
+
+    private boolean useFilmeDestaque = false;
+
+    private FilmesAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,7 +41,7 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
 
-        ListView listView = (ListView) view.findViewById(R.id.list_filmes);
+        listView = (ListView) view.findViewById(R.id.list_filmes);
 
         final ArrayList<ItemFilme> lista = new ArrayList<>();
 
@@ -47,8 +54,8 @@ public class MainFragment extends Fragment {
         lista.add(new ItemFilme("Homem de Ferro", "Filme de heroi Gênio, bilionário, playboy, filantropo.", "28/04/2016", 2.5f));
 
 
-        FilmesAdapter adapter = new FilmesAdapter(getContext(), lista);
-
+         adapter = new FilmesAdapter(getContext(), lista);
+        adapter.setUseFilmeDestaque(useFilmeDestaque);
 
         listView.setAdapter(adapter);
 
@@ -58,16 +65,42 @@ public class MainFragment extends Fragment {
 
                 ItemFilme itemFilme = lista.get(position);
 
-                Intent intent = new Intent(getContext(), FilmeDetalheActivity.class);
+                CallBack callBack = (CallBack) getActivity();
+                callBack.onItemSelected(itemFilme);
 
-                intent.putExtra(MainActivity.KEY_FILME, itemFilme);
-
-                startActivity(intent);
+                posicaoItem = position;
             }
         });
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_POSICAO)) {
+
+            posicaoItem = savedInstanceState.getInt(KEY_POSICAO);
+        }
+
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        if (posicaoItem != ListView.INVALID_POSITION) {
+            outState.putInt(KEY_POSICAO, posicaoItem);
+
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (posicaoItem != ListView.INVALID_POSITION && listView != null) {
+
+            listView.smoothScrollToPosition(posicaoItem);
+        }
+
     }
 
     @Override
@@ -91,8 +124,19 @@ public class MainFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
 
+    public void setUseFilmeDestaque(boolean useFilmeDestaque) {
+        this.useFilmeDestaque = useFilmeDestaque;
 
+        if (adapter != null){
+            adapter.setUseFilmeDestaque(useFilmeDestaque);
+        }
+    }
+
+    public interface CallBack {
+
+        void onItemSelected(ItemFilme itemFilme);
     }
 
 
